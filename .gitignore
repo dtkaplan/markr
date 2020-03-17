@@ -1,0 +1,6 @@
+.httr-oauth
+token
+inst/doc
+.Rproj.user
+.DS_Store
+**/secret-token.RDS

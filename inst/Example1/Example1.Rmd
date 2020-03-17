@@ -1,0 +1,147 @@
+---
+title: "Connecting to Google Sheets"
+output: learnr::tutorial
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+library(markr)
+library(googlesheets4)
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+Storing an auth  token  for your tutorial
+```{r eval=FALSE}
+library(googledrive4)
+# get the address of the directory ~/R/gargle/gargle-oauth
+dir("~/.R/gargle/gargle-oauth")
+foo <- readRDS(dir()[1]) # Read in the token
+saveRDS(foo, file =  "~/Downloads/secret-token.RDS")
+# then move this to your learnr directory (the one with the Rmd file)
+# make sure to exclude it from your git repo so that it's not 
+# publicly visible
+hoo  <- readRDS("secret-token.RDS")
+```
+
+Go to <https://console.cloud.google.com> and set up a new project. My project is called `LearnrCache`.
+
+
+
+## Setting up accounts
+
+Each user will need to be given a unique ID  and a password. These will be stored in a Google sheet. It's perfectly reasonable to have one sheet for all your students and all your classes. You  can use the same sheet in each of your learnr tutorials across all of your  classes. Or you might prefer to set up an individual  sheet for each  class. I don't think  there is a strong reason  to  do this.
+
+You may prefer to create a Google account specifically to hold these spreadsheets. 
+
+0. Create a Google Sheets access  token
+
+```{r eval=FALSE}
+library(googlesheets4)
+sheets_auth(token = hoo)
+```
+
+1. Go to Google drive and create a new sheet.  (I suggest that you first create a new folder to hold the sheet.)
+
+2. Fill in the sheet to resemble the following example. Use `id`  and `password` as the column names.
+
+id | password
+---|---------
+Danny | mosaic
+Donald | POTUS
+Laika | shiba inu
+Mindo | dog
+
+I have created such a sheet [at this address](https://docs.google.com/spreadsheets/d/1h_G3M-HTVfrC8lqHS8aKn_jVFg2_Rnnbtk5erpWX54o/edit?usp=sharing). The sheet is publicly viewable for  anyone who has the URL.  But you will not be publishing this URL anywhere.
+
+3. In the Google Sheet, go to "Sharing" and set things up so that anyone with the link can *view*.  Copy the link that's provided.
+
+4. From the link, extract the *key*. These are the gibberish letters and numbers  following the  `/d/` in the URL and  ending at the next forward slash  '/'. Record that key  so that you can put in into your  learnr document.
+
+For convenience, I'll do that in the chunk that, in the Rmd source for this Example,  follows here. Remember, don't give the key to your students or anyone else.
+
+```{r echo=FALSE}
+password_key <- "1h_G3M-HTVfrC8lqHS8aKn_jVFg2_Rnnbtk5erpWX54o"
+```
+
+##  Setting up  the `{markr}`store
+
+You will  also need to set up another Google sheet. Probably it's most convenient to put it in the same directory as the  password file. You  can use one such store sheet among multiple learnr tutorials, or you may prefer to have one store sheet  per class.
+
+As with the password file,  record the google sheets *key* for use in your tutorial.
+
+```{r echo=FALSE}
+store_key <- "1D9kzkgUEGRvv2Q7q2n8ca9gcZk1_aglodbGJ3rLCYjI"
+```
+
+
+## The login page
+
+The first, or one of the first sections in your document should contain the login bar.  Create this by using the `user_ID()` function as in the following chunk which can be seen in  the source document. Put the password key that you copied from Google in the first slot,  and the  store key in  the second slot.
+
+```{r login, echo=FALSE}
+user_ID(key = password_key, store = store_key)
+```
+
+### Exercise 
+
+*Here's a simple exercise with an empty code chunk provided for entering the answer.*
+
+Write the R code required to add two plus two:
+
+```{r two-plus-two, exercise=TRUE}
+
+```
+
+### Exercise with Code
+
+*Here's an exercise with some prepopulated code as well as `exercise.lines = 5` to provide a bit more initial room to work.*
+
+Now write a function that adds any two numbers and then call it:
+
+```{r add-function, exercise=TRUE, exercise.lines = 5}
+add <- function() {
+  
+}
+```
+
+## Topic 2
+
+### Exercise with Hint
+
+*Here's an exercise where the chunk is pre-evaulated via the `exercise.eval` option (so the user can see the default output we'd like them to customize). We also add a "hint" to the correct solution via the chunk immediate below labeled `print-limit-hint`.*
+
+Modify the following code to limit the number of rows printed to 5:
+
+```{r print-limit, exercise=TRUE, exercise.eval=TRUE}
+mtcars
+```
+
+```{r print-limit-hint}
+head(mtcars)
+```
+
+### Quiz
+
+*You can include any number of single or multiple choice questions as a quiz. Use the `question` function to define a question and the `quiz` function for grouping multiple questions together.*
+
+Some questions to verify that you understand the purposes of various base and recommended R packages:
+
+```{r quiz}
+quiz(
+  question("Which package contains functions for installing other R packages?",
+    answer("base"),
+    answer("tools"),
+    answer("utils", correct = TRUE),
+    answer("codetools")
+  ),
+  question("Which of the R packages listed below are used to create plots?",
+    answer("lattice", correct = TRUE),
+    answer("tools"),
+    answer("stats"),
+    answer("grid", correct = TRUE)
+  )
+)
+```
+

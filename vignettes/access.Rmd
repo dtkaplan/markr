@@ -1,0 +1,108 @@
+---
+title: "Access & Security"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Access & Security}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+The `{markr}` package uses Google Sheets as persistent storage of user IDs and user submissions. This vignette provides some explanation and instructions for setting up your `{learnr}` tutorials so that they can read from and write to the appropriate files in your Google space.
+
+A `{learnr}` tutorial  is a kind of Shiny app. Writing and deploying a tutorial requires Shiny programming practices. Usually this are practically invisible and a tutorial source document looks very much like an ordinary Rmd document. Storing a record of user interactions with the tutorial, however, does involve using programming constructs for what is called "persistent storage." (Background on  several kinds of persistent storage is given [here](https://deanattali.com/blog/shiny-persistent-data-storage/).) 
+
+You can use `{markr}` without any understanding of persistent storage beyond these two steps:
+
+1. Creating the Google sheets i) to hold user IDs and ii) to hold the record of user interaction with the tutorial.
+2. Creating the means of login access to the sheets in (1) for the  deployed tutorial  to use.
+
+## Creating Google Sheets
+
+For these instructions I am using a Google account with address `StatPrep.Annie@gmail.com`. You can use your own Google account, but for security reasons you may want to consider setting  up and using another account in order to avoid inadvertently providing access to your personal files on Google Drive.
+
+1. Log in to the Google Drive account you will be using as the persistent storage for  your tutorials.
+
+Within Google Drive, you may want to create a directory to hold the storage. 
+
+2. Create a Google Sheet file with a first row consisting of two names: "id" and "password". Populate additional rows with the user names you will assign to your tutorial users and with a password. Note that passwords will be stored in plain text, so *do not* use passwords that should be kept confidential. (Using a convention for passwords like "banana-tiger" produces passwords that are easy to remember.)
+
+3. As for every file stored on  Google Drive, there will be a unique URL assigned.  For the file used in  this example, the link is <https://docs.google.com/spreadsheets/d/1WvQDD1sQHcc_aZ1eisWkZvhU4a3jEAR2HXt_1REojpM/edit?usp=sharing>.
+
+4. Copy  out  the "key" from the file's URL. You will need this key for each tutorial that you write using `{markr}`. For the URL in (3),  the key  is `"1WvQDD1sQHcc_aZ1eisWkZvhU4a3jEAR2HXt_1REojpM"`.
+
+5. Repeat steps 2 through 4 to create a second Google Sheet to hold the submissions. This sheet will have 10 named columns, as in  the example file  at <https://docs.google.com/spreadsheets/d/14z7FM64GUq8nc6Q4zvJKH5ynEY2lBttiIIqAxmEgojA/edit?usp=sharing>. You will use  the key for this submission file (`"14z7FM...EgojA"`) in  your `{markr}` tutorials.
+
+## Caching your Google Sheets credential
+
+Your `{learnr}/{markr}` tutorial will, when  you run it, need to  access the sheets you've just created. The next session shows how to direct  your tutorial to the right storage by using the keys you created in the previous section.
+
+**Before**  you can do this successfully, you will need to *cache* an authorization "token" to be used.
+
+1. If you haven't already done so, install the `{googlesheets4}`  package.
+2. At the R console, give the command 
+
+    googlesheets4::sheets_auth()
+    
+3. In response to the command in (2), your  browser should direct you to log in to Google Sheets. Login to the account you used to store the password and submission files in the previous section. Then accept the requests for  permission for `{googlesheets4}` to  access  your account and other such security precautions.
+
+4. Behind the scenes, `{googlesheets4}` will create a  token file and store it  on  your machine in the directory:
+
+- `~/.R/gargle/gargle-oauth` on OS-X/UNIX
+- ????? on Windows  (help  please!)
+
+5. Find the token file created by `{googlesheets4}`. It will have a name like:
+
+`dd95c2217b96d7959d38f96c91f326bb_myaccount@gmail.com`
+
+6. Copy the token file to the same directory where your tutorial's Rmd file resides. **RENAME the copy** to `secret-token.RDS`. (It must be exactly this name  and the copy must be in the  same directory as the tutorial Rmd file. You will need a  `secret-token.RDS` file for each tutorial directory. They will be copies of each other.)
+
+7. If you are using git within an RStudio project, mark the file as to be *ignored*. This  will  prevent git from saving the file to your git repo. 
+
+## Writing a tutorial with `{markr}` storage.
+
+You write `{markr}` tutorials in a perfectly ordinary  way. To implement the storage, add a chunk to the file. It seems sensible to make this the first section  in the tutorial so that users will encounter it *before* working the actual exercises and questions in the tutorial. The chunk will look like this:
+
+````
+`` `{r login-chunk-name,  echo=FALSE}
+library(markr)
+# Use your own password and storage keys
+password_key <- "1WvQDD1sQHcc_aZ1eisWkZvhU4a3jEAR2HXt_1REojpM"
+store_key    <- "14z7FM64GUq8nc6Q4zvJKH5ynEY2lBttiIIqAxmEgojA"
+user_ID(key = password_key, store = store_key)
+`` `
+````
+
+Once you've modified your tutorial to include the login chunk, but **before deploying it**, test it out on your computer. This simply means pressing the "Run Document"  button  in RStudio (or any other way of running a tutorial document).
+
+In  the login section of the document--the section you created!--you will see a text-entry box. Enter a user ID and password in your Google Sheet password file in this format:
+
+    userid::password
+
+Press "Submit login credentials".
+
+[Perhaps someone will help me re-organize this so that the user ID and password go into separate text-entry boxes and  the password  is not  shown  in plain text.]
+
+Now submit answers from the exercises and questions in your tutorial. As you do so, one or more rows will  be added to the submission storage sheet. (You can see this by opening the sheet in a browser in the ordinary way for Google Sheets.)
+
+Notice  that in  the submission store sheet, there  are fields `tutorial-id` and  `tutorial-version`. These will  be filled  in by default  with  the name  of  the  directory in which the tutorial Rmd file lives. It's  highly recommended  that  you set these manually in the YAML  section of your tutorial to  have unique  values as with this  example  copied from  the  `{learnr}` documentation:
+
+    tutorial:
+      id: "com.example.tutorials.my-first-tutorial"
+      version: 2.1
+
+## Revising your tutorial
+
+In the  ordinary course of events you  may want  to revise your tutorial, adding,  deleting, or changing questions.  Some tips:
+
+1. Leave  the `tutorial_id` as you initially set it (unless you regard the revision  as a "new" tutorial.)
+2. Update the version number.
+3. Leave chunk names  alone so that submissions from  the revised document will  correspond  to submissions from the previous versions. Of course, if  you add a  new question, you'll need  to  give it a new, unique chunk name. The in-between case--when you revise a question substantially--I leave to your own judgment.  Note that for `{learnr}` *questions*, the stored submission  will contain a `TRUE/FALSE` indicator for whether the answer was correct in the version in  use at the time of submission.
+
