@@ -33,7 +33,7 @@ user_ID <- function(
     #   stop("There must be a file called `secret-token.RDS` in the app directory.")
     # }
 
-    googledrive::drive_auth(path  = "learnrcache-efcb19f92072.json")
+    googledrive::drive_auth(email="dtkaplan@gmail.com", path  = "learnrcache-efcb19f92072.json")
     passwd_df <-  sheets_read(key)
   }
   if (!all(names(passwd_df) %in% c("id", "password")))
