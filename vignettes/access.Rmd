@@ -64,7 +64,15 @@ Your `{learnr}/{markr}` tutorial will, when  you run it, need to  access the she
 
 6. Copy the token file to the same directory where your tutorial's Rmd file resides. **RENAME the copy** to `secret-token.RDS`. (It must be exactly this name  and the copy must be in the  same directory as the tutorial Rmd file. You will need a  `secret-token.RDS` file for each tutorial directory. They will be copies of each other.)
 
-7. If you are using git within an RStudio project, mark the file as to be *ignored*. This  will  prevent git from saving the file to your git repo. 
+7. If you are using git within an RStudio project, mark the file as to be *ignored*. This  will  prevent git from saving the file to your git repo. Even better, insert the following line into the top-level  `.gitignore` file:
+
+`**/secret-token.RDS`
+
+This will cause git to ignore *all* files named  `secret-token.RDS` in your repository.
+
+Note that when you *deploy* your tutorial,  e.g. to `shinyapps.io`, the `secret-token.RDS` file will  also  be  uploaded.
+
+If you desire to  deploy  apps as  part  of a package, with  the apps to  be  run on  the  user's own system, I *do not yet* have a way to  keep the `secret-token.RDS` file secret. It has to be part of  your app. **Suggestions for how to  accomplish  this would be  appreciated.**
 
 ## Writing a tutorial with `{markr}` storage.
 

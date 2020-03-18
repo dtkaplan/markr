@@ -26,6 +26,6 @@ markr_event_recorder <- function(tutorial_id,
   }
 
   # for debugging
-  save(this_event, file="event.rda")
+  #save(this_event, file="event.rda")
 
 }
