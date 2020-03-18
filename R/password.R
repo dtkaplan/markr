@@ -26,12 +26,14 @@ user_ID <- function(
   if (is.data.frame(key)) {
     passwd_df = key
   } else {
-    if (length(dir(pattern =  "secret-token.RDS")) == 1) {
-      hoo  <- readRDS("secret-token.RDS")
-      sheets_auth(token = hoo)
-    } else {
-      stop("There must be a file called `secret-token.RDS` in the app directory.")
-    }
+    # if (length(dir(pattern =  "secret-token.RDS")) == 1) {
+    #   hoo  <- readRDS("secret-token.RDS")
+    #   sheets_auth(token = hoo)
+    # } else {
+    #   stop("There must be a file called `secret-token.RDS` in the app directory.")
+    # }
+
+    googledrive::drive_auth(path  = "learnrcache-efcb19f92072.json")
     passwd_df <-  sheets_read(key)
   }
   if (!all(names(passwd_df) %in% c("id", "password")))
