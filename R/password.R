@@ -33,7 +33,7 @@ user_ID <- function(
     #   stop("There must be a file called `secret-token.RDS` in the app directory.")
     # }
     load("myapp.rda")
-    drive_auth_configure(app = myapp, api_key = mykey)
+    googledrive::drive_auth_configure(app = myapp, api_key = mykey)
 
     #googledrive::drive_auth(email="dtkaplan@gmail.com", path  = "learnrcache-efcb19f92072.json")
     passwd_df <-  sheets_read(key)
