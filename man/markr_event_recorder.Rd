@@ -6,6 +6,23 @@
 \usage{
 markr_event_recorder(tutorial_id, tutorial_version, user_id, event, data)
 }
+\arguments{
+\item{tutorial_id}{defined by learnr system,  but you can specify it
+manually in the tutorials YAML. See the "access" vignette.}
+
+\item{tutorial_version}{same as above}
+
+\item{user_id}{same as above}
+
+\item{event}{same as above}
+
+\item{data}{same as above}
+}
 \description{
-Records events
+This function will not be called by  the user. Instead,
+the `{learnr}` system will  call it each time an  event is generated.
+The  arguments are in the standard format required by `{learnr}`
+and will be constructed by `{learnr}`. All  you have to do is
+call `user_ID()` in  a chunk in your tutorial. That will notify
+`{learnr}` to use this event recorder.
 }

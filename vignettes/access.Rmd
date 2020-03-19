@@ -42,37 +42,45 @@ Within Google Drive, you may want to create a directory to hold the storage.
 
 ## Caching your Google Sheets credential
 
-Your `{learnr}/{markr}` tutorial will, when  you run it, need to  access the sheets you've just created. The next session shows how to direct  your tutorial to the right storage by using the keys you created in the previous section.
+Your `{learnr}/{markr}` tutorial will, when  you run it, need to  access the sheets you've just created. The next section shows how to direct  your tutorial to the right storage by using the keys you created in the previous section.
 
 **Before**  you can do this successfully, you will need to *cache* an authorization "token" to be used.
 
-1. If you haven't already done so, install the `{googlesheets4}`  package.
-2. At the R console, give the command 
+1. If you haven't already done so, install the `{googlesheets4}` and `{googledrive}` packages.
+2. At the R console, give these commands:
 
-    googlesheets4::sheets_auth()
+```r
+options(gargle_oauth_cache = ".secrets")
+googledrive::drive_auth()  
+# In response, Google will ask for permissions ...  
+# give them, then
+googlesheets4::sheets_auth(token = drive_token())
+```
+   
+In response to `drive_auth()`  command in the above, your  browser should direct you to log in to Google Sheets. Login to the account you used to store the password and submission files in the previous section. Accept the requests for  permission to  access your account.
+
+At the end of this process (Remember the `sheets_auth()` command from the above!), you should have a directory called `.secrets` in the current working directory.  In the `.secrets` directory there will be a file with a name like
+
+`626f181d0271802a652ecd26ed5dc62e_yourname@gmail.com
+
+3. Give the  R command `getwd()` to remind yourself of where the `.secrets`  directory has just been created.
     
-3. In response to the command in (2), your  browser should direct you to log in to Google Sheets. Login to the account you used to store the password and submission files in the previous section. Then accept the requests for  permission for `{googlesheets4}` to  access  your account and other such security precautions.
+4. Whenever you  write a `{learnr}` tutorial that uses the `{markr}` system,  it will be in whatever directory you set up. We'll call that the tutorial directory. Your job now is to copy the `.secrets` directory (and the file within) into the  tutorial directory. This is straightforward, *except* RStudio doesn't give access to files or directories starting with a period. So you will have to use the terminal to copy the directory. This involves some UNIX commands. 
 
-4. Behind the scenes, `{googlesheets4}` will create a  token file and store it  on  your machine in the directory:
+- `ls  -a` : will  list all files in the current directory.
+- `ls -a .secrets`: will tell you whether the directory you  are currently in  has a `.secrets`  directory
+- `cd [directory]` : will set the current working directory (in UNIX). Replace `[directory]` with the directory location you found in step (3). 
+- `pwd` : will tell you  the current working directory, so that you  can confirm you are where you want to be. 
+- `cp .secrets [path to the tutorial directory]` will make a copy of the  `.secrets` directory  (and its contents) in the place you specify.
 
-- `~/.R/gargle/gargle-oauth` on OS-X/UNIX
-- ????? on Windows  (help  please!)
+The  `.secrets`  directory must be called exactly `.secrets`  and  must be  in  the same directory as your tutorial Rmd file.
 
-5. Find the token file created by `{googlesheets4}`. It will have a name like:
 
-`dd95c2217b96d7959d38f96c91f326bb_myaccount@gmail.com`
+Note that when you eventually *deploy* your tutorial,  e.g. to `shinyapps.io`, the `.secrets` directory will also be uploaded. You should see `.secrets` listed among the files to be included with the deployment.
 
-6. Copy the token file to the same directory where your tutorial's Rmd file resides. **RENAME the copy** to `secret-token.RDS`. (It must be exactly this name  and the copy must be in the  same directory as the tutorial Rmd file. You will need a  `secret-token.RDS` file for each tutorial directory. They will be copies of each other.)
+But first, you have to set up your tutorial Rmd file to use `markr`.
 
-7. If you are using git within an RStudio project, mark the file as to be *ignored*. This  will  prevent git from saving the file to your git repo. Even better, insert the following line into the top-level  `.gitignore` file:
-
-`**/secret-token.RDS`
-
-This will cause git to ignore *all* files named  `secret-token.RDS` in your repository.
-
-Note that when you *deploy* your tutorial,  e.g. to `shinyapps.io`, the `secret-token.RDS` file will  also  be  uploaded.
-
-If you desire to  deploy  apps as  part  of a package, with  the apps to  be  run on  the  user's own system, I *do not yet* have a way to  keep the `secret-token.RDS` file secret. It has to be part of  your app. **Suggestions for how to  accomplish  this would be  appreciated.**
+If you desire to  deploy  apps as  part  of a package, with  the apps to  be  run on  the  user's own system, I *do not yet* have a way to  keep the `.secrets` directory secret. It has to be part of  your app. **Suggestions for how to  accomplish  this would be  appreciated.**
 
 ## Writing a tutorial with `{markr}` storage.
 

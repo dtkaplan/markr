@@ -5,9 +5,17 @@
 #' @param key Data frame of user  IDs and  passwords
 #' @param store ID of sheet storing submissions
 #' @param placeholder Character string giving instructions to user.
+#'
+#' @importFrom checkmate  assert_character
+#' @importFrom googlesheets4 sheets_auth sheets_append sheets_read
+#' @importFrom  googledrive drive_auth drive_token
+#' @importFrom shiny textInput
+#'
 #' @export
 #' @examples
+#' \dontrun{
 #' user_ID("03829392912232232")
+#' }
 
 user_ID <- function(
   key = NULL,
@@ -16,11 +24,11 @@ user_ID <- function(
 ) {
   #  set up the event handler
   options(tutorial.event_recorder = markr_event_recorder)
-  markr:::session_id_init()
+  session_id_init()
   # check inputs
-  checkmate::assert_character(placeholder, len = 1, null.ok = TRUE, any.missing = FALSE)
+  assert_character(placeholder, len = 1, null.ok = TRUE, any.missing = FALSE)
 
-  markr:::store_submission_key(store)
+  store_submission_key(store)
 
 
   if (is.data.frame(key)) {
@@ -33,7 +41,7 @@ user_ID <- function(
       googlesheets4::sheets_auth(token = googledrive::drive_token())
     } else {
       stop("There must be a token in the .secrets directory.")
-      stop("There must be a file called `secret-token.RDS` in the app directory.")
+      # stop("There must be a file called `secret-token.RDS` in the app directory.")
     }
     #load("myapp.rda")
     #googledrive::drive_auth_configure(app = myapp, api_key = mykey)
@@ -46,7 +54,7 @@ user_ID <- function(
 
   learnr::question(
     text = "ID",
-    answer("bogus", correct = TRUE,  message = "Will never see this"),
+    learnr::answer("bogus", correct = TRUE,  message = "Will never see this"),
     type = "learnr_userid",
     correct = "ID validated",
     incorrect = "Invalid ID",
@@ -62,11 +70,13 @@ user_ID <- function(
   )
 }
 
-
+#' @importFrom  learnr question_ui_initialize
+#' @importFrom learnr question_is_valid
+#' @importFrom learnr question_is_correct
 
 #' @export
 question_ui_initialize.learnr_userid <- function(question, value, ...) {
-  textInput(
+  shiny::textInput(
     question$ids$answer,
     label = "loginID",
     placeholder = question$options$placeholder,
@@ -74,6 +84,8 @@ question_ui_initialize.learnr_userid <- function(question, value, ...) {
   )
 }
 
+#' @importFrom learnr  mark_as
+#'
 #' @export
 question_is_valid.learnr_userid <- function(question, value, ...) {
   (! is.null(value)) &&  nchar(value)  > 4
@@ -94,7 +106,7 @@ question_is_correct.learnr_userid <- function(question, value, ...) {
     )
   }
 
-  markr:::store_ID(fields[1]) # store the user ID
+  store_ID(fields[1]) # store the user ID
   mark_as(TRUE, NULL)
 
 }

@@ -2,10 +2,23 @@
 % Please edit documentation in R/store.R
 \name{store_ID}
 \alias{store_ID}
+\alias{store_password}
+\alias{store_submission_key}
 \title{Store user information}
 \usage{
 store_ID(str)
+
+store_password(df)
+
+store_submission_key(key)
+}
+\arguments{
+\item{str}{the ID that the user logged into the tutorial with}
+
+\item{df}{a dataframe containing the user IDs and passwords}
+
+\item{key}{a Google Sheets key}
 }
 \description{
-Store user information
+These are internal functions
 }

@@ -21,5 +21,7 @@ user_ID(
 Creates a text box group tutorial quiz question.
 }
 \examples{
+\dontrun{
 user_ID("03829392912232232")
+}
 }
