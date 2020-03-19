@@ -16,20 +16,23 @@ user_ID <- function(
 ) {
   #  set up the event handler
   options(tutorial.event_recorder = markr_event_recorder)
-
+  markr:::session_id_init()
   # check inputs
   checkmate::assert_character(placeholder, len = 1, null.ok = TRUE, any.missing = FALSE)
 
   markr:::store_submission_key(store)
-  markr:::session_id_init()
+
 
   if (is.data.frame(key)) {
     passwd_df = key
   } else {
     if (length(dir(pattern =  "secret-token.RDS")) == 1) {
-      hoo  <- readRDS("secret-token.RDS")
-      sheets_auth(token = hoo, use_oob = TRUE)
+      #hoo  <- readRDS("secret-token.RDS")
+      #sheets_auth(token = hoo, use_oob = TRUE)
+      googledrive::drive_auth(cache = ".secrets", email = "dtkaplan@gmail.com")
+      googlesheets4::sheets_auth(token = googledrive::drive_token())
     } else {
+      stop("There must be a token in the .secrets directory.")
       stop("There must be a file called `secret-token.RDS` in the app directory.")
     }
     #load("myapp.rda")

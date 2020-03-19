@@ -25,6 +25,7 @@ store_submission_key <- function(key) {
 get_submission_key <- function() markr_env$submission_key
 
 session_id_init <- function() {
+  set.seed(as.numeric(trunc(Sys.time(),  units="secs")))
   markr_env$session_id  <- paste0(round(10 * runif(10)), collapse = "")
 }
 
