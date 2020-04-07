@@ -7,16 +7,21 @@ runtime: shiny_prerendered
 ```{r setup, include=FALSE}
 library(learnr)
 knitr::opts_chunk$set(echo = FALSE)
+library(markr)
+options(gargle_quiet = TRUE)
+# Trying to turn  off storage of previous answers ...
+options(tutorial.storage = "none")
+# Use your own password and storage keys
+password_key <- "1WvQDD1sQHcc_aZ1eisWkZvhU4a3jEAR2HXt_1REojpM"
+store_key    <- "14z7FM64GUq8nc6Q4zvJKH5ynEY2lBttiIIqAxmEgojA"
 ```
 
 ## Log in 
 
-```{r login-section, echo=FALSE}
-library(markr)
-# Use your own password and storage keys
-password_key <- "1WvQDD1sQHcc_aZ1eisWkZvhU4a3jEAR2HXt_1REojpM"
-store_key    <- "14z7FM64GUq8nc6Q4zvJKH5ynEY2lBttiIIqAxmEgojA"
-user_ID(key = password_key, store = store_key)
+
+```{r login-section, echo=FALSE, warning=FALSE,  comment="Ignore this ..."}
+user_ID(email = "StatPrep.Annie@gmail.com",  
+        key = password_key, store = store_key)
 ```
 
 

@@ -5,12 +5,15 @@
 \title{Login ID/Password question}
 \usage{
 user_ID(
+  email = NULL,
   key = NULL,
   store = NULL,
   placeholder = "Enter ID here in format user_name::password"
 )
 }
 \arguments{
+\item{email}{email address of the account holding the key and store sheets}
+
 \item{key}{Data frame of user  IDs and  passwords}
 
 \item{store}{ID of sheet storing submissions}

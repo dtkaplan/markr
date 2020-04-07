@@ -36,9 +36,11 @@ markr_event_recorder <- function(tutorial_id,
 
   # Don't store the output of chunks -- it can be arbitrarily long.
   if  ( ! event %in% c("exercise_result")) {
-    googlesheets4::sheets_append(
-      this_event,
-      get_submission_key() )
+    suppressMessages(
+      googlesheets4::sheets_append(
+        this_event,
+        get_submission_key() )
+    )
   }
 
   # for debugging

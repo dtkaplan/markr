@@ -2,6 +2,7 @@
 #'
 #' Creates a text box group tutorial quiz question.
 #'
+#' @param email email address of the account holding the key and store sheets
 #' @param key Data frame of user  IDs and  passwords
 #' @param store ID of sheet storing submissions
 #' @param placeholder Character string giving instructions to user.
@@ -18,6 +19,7 @@
 #' }
 
 user_ID <- function(
+  email = NULL,
   key = NULL,
   store = NULL,
   placeholder = "Enter ID here in format user_name::password"
@@ -37,8 +39,8 @@ user_ID <- function(
     #if (length(dir(pattern =  "secret-token.RDS")) == 1) {
       #hoo  <- readRDS("secret-token.RDS")
       #sheets_auth(token = hoo, use_oob = TRUE)
-      googledrive::drive_auth(cache = ".secrets")
-      googlesheets4::sheets_auth(token = googledrive::drive_token())
+      googledrive::drive_auth(cache = ".secrets")#,  email = email)
+      googlesheets4::sheets_auth(token = googledrive::drive_token())#, email = email)
     # } else {
     #   stop("There must be a token in the .secrets directory.")
     #   # stop("There must be a file called `secret-token.RDS` in the app directory.")
@@ -47,7 +49,7 @@ user_ID <- function(
     #googledrive::drive_auth_configure(app = myapp, api_key = mykey)
 
     #googledrive::drive_auth(email="dtkaplan@gmail.com", path  = "learnrcache-efcb19f92072.json")
-    passwd_df <-  sheets_read(key)
+    suppressMessages(passwd_df <-  sheets_read(key))
   }
   if (!all(names(passwd_df) %in% c("id", "password")))
     stop("password data frame must have columns 'ID' and 'password'")

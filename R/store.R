@@ -3,6 +3,8 @@
 #' These are internal functions
 #' @param str the ID that the user logged into the tutorial with
 
+markr_env  <-  new.env()
+
 store_ID <- function(str) {
   if(is.null(str)) str <- ".initializing."
  markr_env$user_ID <- str
@@ -13,7 +15,7 @@ get_ID  <- function() {
   else markr_env$user_ID
 }
 
-markr_env  <-  new.env()
+
 
 #' @rdname store_ID
 #' @param df a dataframe containing the user IDs and passwords
